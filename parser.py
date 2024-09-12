@@ -145,9 +145,7 @@ def p_statement(p):
     '''
     statement   :   criacaoVariavel
                 |   atribuicaoValor
-                |   chamadaFuncao
                 |   fechamentoEscopo
-                |   escritaLeitura
     '''
     p[0]=p[1]
 
@@ -155,9 +153,23 @@ def p_criacaoVariavel(p):
     '''
     criacaoVariavel :   INT VARIAVEL FINAL_LEXEMA
     '''
+    print("criou variavel")
 
 def p_atribuicaoValor(p):
-    pass
+    '''
+    atribuicaoValor :   VARIAVEL ATRIBUICAO valorAtribuido
+    '''
+    print("atribui valor")
+
+def p_valorAtribuido(p):
+    '''
+    valorAtribuido  :   expressaoMatematica
+                    |   expressaoMatematica OP_NAODETERMINISTICO expressaoMatematica
+    '''
+    print("valor atribuido")
+
+def p_expressaoMatematica(p):
+    AAAAAAAAa
 
 def p_chamadaFuncao(p):
     pass
@@ -166,6 +178,7 @@ def p_fechamentoEscopo(p):
     '''
     fechamentoEscopo    :   FECHA_CHAVES
     '''
+    print("fechou escopo")
 
 def p_escritaLeitura(p):
     pass
