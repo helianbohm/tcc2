@@ -141,47 +141,43 @@ def t_error(t):
 
 #ANALISE SINTATICA
 
+
 def p_statement(p):
     '''
     statement   :   criacaoVariavel
-                |   atribuicaoValor
                 |   fechamentoEscopo
     '''
-    p[0]=p[1]
-
 def p_criacaoVariavel(p):
     '''
     criacaoVariavel :   INT VARIAVEL FINAL_LEXEMA
     '''
     print("criou variavel")
 
-def p_atribuicaoValor(p):
-    '''
-    atribuicaoValor :   VARIAVEL ATRIBUICAO valorAtribuido
-    '''
-    print("atribui valor")
+#def p_atribuicaoValor(p):
+#    '''
+#    atribuicaoValor :   VARIAVEL ATRIBUICAO valorAtribuido
+#    '''
+#    print("atribui valor")
 
-def p_valorAtribuido(p):
-    '''
-    valorAtribuido  :   expressaoMatematica
-                    |   expressaoMatematica OP_NAODETERMINISTICO expressaoMatematica
-    '''
-    print("valor atribuido")
+#def p_valorAtribuido(p):
+#    '''
+#    valorAtribuido  :   expressaoMatematica
+#                    |   expressaoMatematica OP_NAODETERMINISTICO expressaoMatematica
+#    '''
+#    print("valor atribuido")
 
-def p_expressaoMatematica(p):
-    AAAAAAAAa
+#def p_expressaoMatematica(p):
+#    pass
 
-def p_chamadaFuncao(p):
-    pass
+#def p_chamadaFuncao(p):
+#    pass
+
 
 def p_fechamentoEscopo(p):
     '''
     fechamentoEscopo    :   FECHA_CHAVES
     '''
     print("fechou escopo")
-
-def p_escritaLeitura(p):
-    pass
 
 errosSintaticos = []
 def p_error(p):
@@ -196,8 +192,12 @@ def p_error(p):
 
 dadoAnalisado = '''
     int teste;
-    aaaa{{
+    int novo
     }
+    }
+    int teste
+    }
+    int ultimo;
 '''
 
 print(dadoAnalisado)
@@ -205,11 +205,11 @@ print(dadoAnalisado)
 lexer = lex.lex()
 lexer.input(dadoAnalisado)
 
-#while True:
-#    tok = lexer.token()
-#    if not tok:
-#        break
-#    print(tok)
+while True:
+    tok = lexer.token()
+    if not tok:
+        break
+    print(tok)
 
 parser = yacc.yacc()    
 resultado = parser.parse(dadoAnalisado)
