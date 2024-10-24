@@ -142,36 +142,112 @@ def t_error(t):
 #ANALISE SINTATICA
 
 
+def p_program(p):
+    '''
+    program     :   statement program
+                |   statement
+    '''
+
 def p_statement(p):
     '''
     statement   :   criacaoVariavel
+                |   atribuicaoValor
+                |   chamadaFuncao
+                |   leituraEscrita
+                |   defineOutput
                 |   fechamentoEscopo
     '''
+    
 def p_criacaoVariavel(p):
     '''
     criacaoVariavel :   INT VARIAVEL FINAL_LEXEMA
     '''
     print("criou variavel")
 
-#def p_atribuicaoValor(p):
-#    '''
-#    atribuicaoValor :   VARIAVEL ATRIBUICAO valorAtribuido
-#    '''
-#    print("atribui valor")
+def p_atribuicaoValor(p):
+    '''
+    atribuicaoValor :   VARIAVEL ATRIBUICAO valorAtribuido FINAL_LEXEMA
+    '''
+    print("atribui valor")
 
-#def p_valorAtribuido(p):
-#    '''
-#    valorAtribuido  :   expressaoMatematica
-#                    |   expressaoMatematica OP_NAODETERMINISTICO expressaoMatematica
-#    '''
-#    print("valor atribuido")
+def p_valorAtribuido(p):
+    '''
+    valorAtribuido  :   expressaoMatematica
+                    |   expressaoMatematica OP_NAODETERMINISTICO expressaoMatematica
+    '''
+    #print("valor atribuido")
 
-#def p_expressaoMatematica(p):
-#    pass
+def p_expressaoMatematica(p):
+    '''
+    expressaoMatematica :   operando
+                        |   ABRE_PARENTESES expressaoMatematica FECHA_PARENTESES
+                        |   expressaoMatematica operadorMatematico expressaoMatematica
+    '''
+    ##print("expressao matematica")
 
-#def p_chamadaFuncao(p):
-#    pass
+def p_operadorMatematico(p):
+    '''
+    operadorMatematico  :   OP_MAT_ADICAO
+                        |   OP_MAT_SUBTRACAO
+                        |   OP_MAT_MULTIPLICACAO
+                        |   OP_MAT_DIVISAO
+                        |   OP_MAT_RESTO
+    '''
 
+def p_operando(p):
+    '''
+    operando    :   VARIAVEL
+                |   VALOR_INTEIRO   
+    '''
+
+def p_chamadaFuncao(p):
+    '''
+    chamadaFuncao   :   WHILE ABRE_PARENTESES chamadaOperacaoLogica FECHA_PARENTESES ABRE_CHAVES
+                    |   IF ABRE_PARENTESES chamadaOperacaoLogica FECHA_PARENTESES ABRE_CHAVES
+                    |   ELSE ABRE_CHAVES
+    '''
+    print("chamou funcao")
+
+def p_chamadaOperacaoLogica(p):
+    '''
+    chamadaOperacaoLogica   :   ABRE_PARENTESES operacaoLogica FECHA_PARENTESES portaLogica chamadaOperacaoLogica
+                            |   ABRE_PARENTESES operacaoLogica FECHA_PARENTESES
+    '''
+
+def p_operacaoLogica(p):
+    '''
+    operacaoLogica  :   OP_LOG_NO ABRE_PARENTESES operacaoLogica FECHA_PARENTESES
+                    |   expressaoMatematica operadorLogico expressaoMatematica
+    '''
+
+def p_operadorLogico(p):
+    '''
+    operadorLogico  :   OP_LOG_MAIOR
+                    |   OP_LOG_MAIORIGUAL
+                    |   OP_LOG_MENOR
+                    |   OP_LOG_MENORIGUAL
+                    |   OP_LOG_IGUAL
+                    |   OP_LOG_DIFERENTE
+    '''
+
+def p_portaLogica(p):
+    '''
+    portaLogica :   OP_LOG_AND
+                |   OP_LOG_OR
+    '''
+
+def p_leituraEscrita(p):
+    '''
+    leituraEscrita  :   PRINT ABRE_PARENTESES CADEIA_CARACTERES FECHA_PARENTESES FINAL_LEXEMA
+                    |   READ ABRE_PARENTESES VARIAVEL FECHA_PARENTESES FINAL_LEXEMA  
+    '''
+    print("leitura/escrita")
+
+def p_defineOutput(p):
+    '''
+    defineOutput    :   OUTPUT ABRE_PARENTESES VALOR_INTEIRO FECHA_PARENTESES FINAL_LEXEMA
+    '''
+    print("output")
 
 def p_fechamentoEscopo(p):
     '''
@@ -184,17 +260,20 @@ def p_error(p):
     errosSintaticos.append(p)
     print("ERRO: ",p)
 
-#dadoAnalisado = '''
-#56 + 96¬;
-#if - while ([ghj]){}for
-#output.
-#'''
-
 dadoAnalisado = '''
     int teste;
     int novo
+    *
+    teste = 40;
+    teste = 50+novo/30;
+    output(1);
+    teste = (teste);
+    print("kdflsdfj");
+    teste = 40  
     }
-    }
+    read(seila);
+    if((!(40>30))&&(17==teste)){
+    else{
     int teste
     }
     int ultimo;
