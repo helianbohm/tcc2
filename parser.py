@@ -5,33 +5,37 @@ import json
 from typing import Literal
 
 
-#RETORNO DE ERROS
+# RETORNO DE ERROS
 
 class Erro:
     def __init__(self, mensagem, linha, coluna, _type: Literal['LEXICO', 'SINTATICO', 'SEMANTICO'], dados=None):
         self.mensagem = mensagem
         self.linha = linha
-        self.coluna = coluna 
+        self.coluna = coluna
         self.tipoErro = _type
         self.dados = dados
 
     def __repr__(self):
-        return (f"ERRO ({self.tipoErro}): {self.mensagem} na linha {self.linha}, coluna {self.coluna}"+(f". Em:\n{retornaContexto(self.dados, self.linha, self.coluna)}" if self.dados else ""))
+        return (f"ERRO ({self.tipoErro}): {self.mensagem} na linha {self.linha}, coluna {self.coluna}" + (
+            f". Em:\n{retornaContexto(self.dados, self.linha, self.coluna)}" if self.dados else ""))
 
     def __eq__(self, outro):
-        return (self.mensagem == outro.mensagem and self.linha == outro.linha and self.coluna == outro.coluna and self.tipoErro == outro.tipoErro)
+        return (
+                    self.mensagem == outro.mensagem and self.linha == outro.linha and self.coluna == outro.coluna and self.tipoErro == outro.tipoErro)
 
     def retornoSimpes(self):
         return f"Erro ({self.messagem}, linha={self.linha}, coluna={self.coluna}, _type={self.tipoErro})"
 
 
 def retornaContexto(dados, linha, coluna):
-    linhaErro = dados.split('\n')[linha-1]
-    onde = linhaErro.lstrip() + '\n' + " " * ((coluna - len('\n'.join(dados.split('\n')[:linha-1])))-((len(linhaErro)-len(linhaErro.lstrip()))+1)) + "^"
+    linhaErro = dados.split('\n')[linha - 1]
+    onde = linhaErro.lstrip() + '\n' + " " * ((coluna - len('\n'.join(dados.split('\n')[:linha - 1]))) - (
+                (len(linhaErro) - len(linhaErro.lstrip())) + 1)) + "^"
 
     return onde
 
-#ANALISE LEXICA
+
+# ANALISE LEXICA
 
 class Lexer:
 
@@ -42,108 +46,108 @@ class Lexer:
         self.tabelaSimbolos = tabelaSimbolos()
         self.erros = erros
 
-
-
     reserved = {
-        'int' : 'INT',
-        'if' : 'IF',
-        'else' : 'ELSE',
-        'while' : 'WHILE',
-        'print' : 'PRINT',
-        'read' : 'READ',
-        'output' : 'OUTPUT',
+        'int': 'INT',
+        'if': 'IF',
+        'else': 'ELSE',
+        'ndif': 'NDIF',
+        'while': 'WHILE',
+        'print': 'PRINT',
+        'read': 'READ',
+        'output': 'OUTPUT',
     }
 
     tokens = [
-    'OP_MAT_ADICAO',            #+
-    'OP_MAT_SUBTRACAO',         #-
-    'OP_MAT_MULTIPLICACAO',     #*
-    'OP_MAT_DIVISAO',           #/
-    'OP_MAT_RESTO',             #%
+                 'OP_MAT_ADICAO',  # +
+                 'OP_MAT_SUBTRACAO',  # -
+                 'OP_MAT_MULTIPLICACAO',  # *
+                 'OP_MAT_DIVISAO',  # /
+                 'OP_MAT_RESTO',  # %
 
-    'ATRIBUICAO',               #=
-    'OP_NAODETERMINISTICO',     #?
+                 'ATRIBUICAO',  # =
+                 'OP_NAODETERMINISTICO',  # ?
 
-    'OP_LOG_MAIOR',             #>
-    'OP_LOG_MAIORIGUAL',        #>=
-    'OP_LOG_MENOR',             #>
-    'OP_LOG_MENORIGUAL',        #>=
-    'OP_LOG_IGUAL',             #==
-    'OP_LOG_DIFERENTE',         #!=
+                 'OP_LOG_MAIOR',  # >
+                 'OP_LOG_MAIORIGUAL',  # >=
+                 'OP_LOG_MENOR',  # >
+                 'OP_LOG_MENORIGUAL',  # >=
+                 'OP_LOG_IGUAL',  # ==
+                 'OP_LOG_DIFERENTE',  # !=
 
-    'OP_LOG_AND',               #&&
-    'OP_LOG_OR',                #||
-    'OP_LOG_NO',                #!
+                 'OP_LOG_AND',  # &&
+                 'OP_LOG_OR',  # ||
+                 'OP_LOG_NO',  # !
 
-    'FINAL_LEXEMA',             #;
-    'COMENTARIO',               ##
-    'ASPAS_DUPLAS',             #"
+                 'FINAL_LEXEMA',  # ;
+                 'COMENTARIO',  ##
+                 'ASPAS_DUPLAS',  # "
 
-    'ABRE_PARENTESES',          #(
-    'FECHA_PARENTESES',         #)
-    'ABRE_COLCHETES',           #[  
-    'FECHA_COLCHETES',          #]
-    'ABRE_CHAVES',              #{
-    'FECHA_CHAVES',             #}
+                 'ABRE_PARENTESES',  # (
+                 'FECHA_PARENTESES',  # )
+                 'ABRE_COLCHETES',  # [
+                 'FECHA_COLCHETES',  # ]
+                 'ABRE_CHAVES',  # {
+                 'FECHA_CHAVES',  # }
 
-    'VALOR_INTEIRO',
-    'VARIAVEL',
-    'CADEIA_CARACTERES',
+                 'VALOR_INTEIRO',
+                 'VARIAVEL',
+                 'CADEIA_CARACTERES',
 
-    'VALOR_INTEIRO_ERRO',
-    'VARIAVEL_ERRO',
-    'CADEIA_CARACTERES_ERRO',
+                 'VALOR_INTEIRO_ERRO',
+                 'VARIAVEL_ERRO',
+                 'CADEIA_CARACTERES_ERRO',
 
-    'ignore'
-    ]  + list(reserved.values())
+                 'ignore'
+             ] + list(reserved.values())
 
+    # Regras de Expressao Regulares
 
-    #Regras de Expressao Regulares
+    t_OP_MAT_ADICAO = r'\+'
+    t_OP_MAT_SUBTRACAO = r'-'
+    t_OP_MAT_MULTIPLICACAO = r'\*'
+    t_OP_MAT_DIVISAO = r'/'
+    t_OP_MAT_RESTO = r'\%'
 
-    t_OP_MAT_ADICAO           = r'\+'
-    t_OP_MAT_SUBTRACAO        = r'-'
-    t_OP_MAT_MULTIPLICACAO    = r'\*'
-    t_OP_MAT_DIVISAO          = r'/'
-    t_OP_MAT_RESTO            = r'\%'
+    t_ATRIBUICAO = r'\='
+    t_OP_NAODETERMINISTICO = r'\?'
 
-    t_ATRIBUICAO              = r'\='
-    t_OP_NAODETERMINISTICO    = r'\?'
+    t_OP_LOG_MAIOR = r'\>'
+    t_OP_LOG_MAIORIGUAL = r'\>\='
+    t_OP_LOG_MENOR = r'\<'
+    t_OP_LOG_MENORIGUAL = r'\<\='
+    t_OP_LOG_IGUAL = r'\=\='
+    t_OP_LOG_DIFERENTE = r'\!\='
 
-    t_OP_LOG_MAIOR            = r'\>'
-    t_OP_LOG_MAIORIGUAL       = r'\>\='
-    t_OP_LOG_MENOR            = r'\<'
-    t_OP_LOG_MENORIGUAL       = r'\<\='
-    t_OP_LOG_IGUAL            = r'\=\='
-    t_OP_LOG_DIFERENTE        = r'\!\='
+    t_OP_LOG_AND = r'\&\&'
+    t_OP_LOG_OR = r'\|\|'
+    t_OP_LOG_NO = r'\!'
 
-    t_OP_LOG_AND              = r'\&\&'
-    t_OP_LOG_OR               = r'\|\|'
-    t_OP_LOG_NO               = r'\!'
+    t_FINAL_LEXEMA = r'\;'
+    t_COMENTARIO = r'\#'
+    t_ASPAS_DUPLAS = r'\"'
 
-    t_FINAL_LEXEMA           = r'\;'
-    t_COMENTARIO             = r'\#'
-    t_ASPAS_DUPLAS           = r'\"'
+    t_ABRE_PARENTESES = r'\('
+    t_FECHA_PARENTESES = r'\)'
+    t_ABRE_COLCHETES = r'\['
+    t_FECHA_COLCHETES = r'\]'
+    t_ABRE_CHAVES = r'\{'
+    t_FECHA_CHAVES = r'\}'
 
-    t_ABRE_PARENTESES        = r'\('
-    t_FECHA_PARENTESES       = r'\)'
-    t_ABRE_COLCHETES         = r'\['
-    t_FECHA_COLCHETES        = r'\]'
-    t_ABRE_CHAVES            = r'\{'
-    t_FECHA_CHAVES           = r'\}'
+    t_INT = r'int'
+    t_IF = r'if'
+    t_ELSE = r'else'
+    t_NDIF = r'ndif'
+    t_WHILE = r'while'
+    t_PRINT = r'print'
+    t_READ = r'read'
+    t_OUTPUT = r'output'
 
-    t_INT                   = r'int'
-    t_IF                    = r'if'
-    t_ELSE                  = r'else'
-    t_WHILE                 = r'while'
-    t_PRINT                 = r'print'
-    t_READ                  = r'read'
-    t_OUTPUT                = r'output'
-
-    t_ignore                = ' \t'
+    t_ignore = ' \t'
 
     def t_VALOR_INTEIRO(self, t):
         r'\d+'
         t.value = int(t.value)
+        print(t.value)
         return t
 
     def t_VALOR_INTEIRO_ERRO(self, t):
@@ -181,8 +185,7 @@ class Lexer:
         self.lex = lex.lex(module=self)
 
 
-
-#ANALISE SINTATICA
+# ANALISE SINTATICA
 
 
 class Parser:
@@ -197,7 +200,8 @@ class Parser:
 
     def verificaExistencia(self, simbolo, p):
         if not self.lexer.tabelaSimbolos.verificaExistenciaSimbolo(simbolo):
-            self.erros.append(Erro(f"Simbolo '{simbolo}' nao declarado", p.lexer.lineno, p.lexer.lexpos, 'SEMANTICO', self.data))
+            self.erros.append(
+                Erro(f"Simbolo '{simbolo}' nao declarado", p.lexer.lineno, p.lexer.lexpos, 'SEMANTICO', self.data))
             print(self.erros[-1])
 
     def passaParser(self, data):
@@ -210,46 +214,52 @@ class Parser:
         if build_lexer:
             self.lexer.build()
 
-
     def p_program(self, p):
         '''
         program     :   statement program
                     |   statement
         '''
+        p[0] = ('program',p[1])
+        print(p[0])
 
     def p_statement(self, p):
-        '''
+        """
         statement   :   criacaoVariavel
                     |   atribuicaoValor
                     |   chamadaFuncao
                     |   leituraEscrita
                     |   defineOutput
                     |   fechamentoEscopo
-        '''
-        
+        """
+        p[0]=('statement',p[1])
+        print(p[0])
+
     def p_criacaoVariavel(self, p):
         '''
         criacaoVariavel :   INT VARIAVEL FINAL_LEXEMA
         '''
         print("criou variavel")
 
-        
+
         if not self.lexer.tabelaSimbolos.verificaExistenciaSimbolo(p[2]):
             self.lexer.tabelaSimbolos.adicionaSimbolo(p[2], None)
         else:
-            self.erros.append(Erro(f"Simbolo '{p[2]}' ja declarado", p.lexer.lineno, p.lexer.lexpos, 'SEMANTICO', self.data))
+            self.erros.append(
+                Erro(f"Simbolo '{p[2]}' ja declarado", p.lexer.lineno, p.lexer.lexpos, 'SEMANTICO', self.data))
             print(self.erros[-1])
-                
 
     def p_atribuicaoValor(self, p):
         '''
         atribuicaoValor :   VARIAVEL ATRIBUICAO valorAtribuido FINAL_LEXEMA
         '''
-        print("atribui valor")
+        p[0] = ('atribuicao', p[1],p[2],p[3],p[4])
+        print(p[0])
+
         if self.lexer.tabelaSimbolos.verificaExistenciaSimbolo(p[1]):
             self.lexer.tabelaSimbolos.atualizaSimbolo(p[1], p[3])
         else:
-            self.erros.append(Erro(f"Simbolo '{p[1]}' ainda nao declarado", p.lexer.lineno, p.lexer.lexpos, 'SEMANTICO', self.data))
+            self.erros.append(
+                Erro(f"Simbolo '{p[1]}' ainda nao declarado", p.lexer.lineno, p.lexer.lexpos, 'SEMANTICO', self.data))
             print(self.erros[-1])
 
     def p_valorAtribuido(self, p):
@@ -257,7 +267,7 @@ class Parser:
         valorAtribuido  :   expressaoMatematica
                         |   expressaoMatematica OP_NAODETERMINISTICO expressaoMatematica
         '''
-        #print("valor atribuido")
+        p[0]=p[1]
 
     def p_expressaoMatematica(self, p):
         '''
@@ -265,7 +275,13 @@ class Parser:
                             |   ABRE_PARENTESES expressaoMatematica FECHA_PARENTESES
                             |   expressaoMatematica operadorMatematico expressaoMatematica
         '''
-        ##print("expressao matematica")
+
+        if len(p)==2:
+            p[0] = p[1]
+        else:
+            print("Expressao Matematica")
+            print(p[2])
+
 
     def p_operadorMatematico(self, p):
         '''
@@ -275,20 +291,31 @@ class Parser:
                             |   OP_MAT_DIVISAO
                             |   OP_MAT_RESTO
         '''
+        p[0]=p[1]
 
     def p_operando(self, p):
         '''
         operando    :   VARIAVEL
-                    |   VALOR_INTEIRO   
+                    |   VALOR_INTEIRO
         '''
+        p[0]=p[1]
+        if type(p[1]) is str:
+            print("entrou numa variavel")
+            print(p[1])
+
+        if (type(p[1]) == str) and not self.lexer.tabelaSimbolos.verificaExistenciaSimbolo(p[1]):
+            self.erros.append(
+                Erro(f"Simbolo '{p[1]}' ainda nao declarado", p.lexer.lineno, p.lexer.lexpos, 'SEMANTICO', self.data))
+            print(self.erros[-1])
 
     def p_chamadaFuncao(self, p):
         '''
         chamadaFuncao   :   WHILE ABRE_PARENTESES chamadaOperacaoLogica FECHA_PARENTESES ABRE_CHAVES
                         |   IF ABRE_PARENTESES chamadaOperacaoLogica FECHA_PARENTESES ABRE_CHAVES
+                        |   NDIF ABRE_CHAVES
                         |   ELSE ABRE_CHAVES
         '''
-        print("chamou funcao")
+        #print("chamou funcao")
 
     def p_chamadaOperacaoLogica(self, p):
         '''
@@ -323,21 +350,21 @@ class Parser:
         '''
         leituraEscrita  :   PRINT ABRE_PARENTESES CADEIA_CARACTERES FECHA_PARENTESES FINAL_LEXEMA
                         |   PRINT ABRE_PARENTESES VARIAVEL FECHA_PARENTESES FINAL_LEXEMA
-                        |   READ ABRE_PARENTESES VARIAVEL FECHA_PARENTESES FINAL_LEXEMA  
+                        |   READ ABRE_PARENTESES VARIAVEL FECHA_PARENTESES FINAL_LEXEMA
         '''
-        print("leitura/escrita")
+        #print("leitura/escrita")
 
     def p_defineOutput(self, p):
         '''
         defineOutput    :   OUTPUT ABRE_PARENTESES VALOR_INTEIRO FECHA_PARENTESES FINAL_LEXEMA
         '''
-        print("output")
+        #print("output")
 
     def p_fechamentoEscopo(self, p):
         '''
         fechamentoEscopo    :   FECHA_CHAVES
         '''
-        print("fechou escopo")
+        #print("fechou escopo")
 
     def p_error(self, p):
         if not p:
@@ -346,69 +373,79 @@ class Parser:
             self.erros.append(Erro(f"Erro sintatico em '{p.value}", p.lineno, p.lexpos, 'SINTATICO', self.data))
 
 
-
-
-#ANALISE SEMANTICA
+# ANALISE SEMANTICA
 
 class tabelaSimbolos:
 
     def __init__(self):
         self.tabela = {}
 
-    def adicionaSimbolo(self, simbolo, valor):
+    def adicionaSimbolo(self, simbolo, valor=None):
         if simbolo not in self.tabela:
             self.tabela[simbolo] = {"Valor": valor}
-        else: 
+        else:
             raise Exception("Variavel ja declarada")
 
     def removeSimbolo(self, simbolo):
         del self.tabela[simbolo]
 
     def atualizaSimbolo(self, simbolo, valor):
+        print("Entrou adiciona")
+        print(simbolo, valor)
         if simbolo in self.tabela:
             self.tabela[simbolo] = {"Valor": valor}
-        else: 
+        else:
             raise Exception("Variavel ainda nao declarada")
 
     def verificaExistenciaSimbolo(self, simbolo):
         return simbolo in self.tabela
-    
+
     def retornaSimbolo(self, simbolo):
         if simbolo in self.tabela:
-            return self.table[simbolo]
-        else: 
-            raise Exception("Variável ainda não declarada")   
+            return self.tabela[simbolo]
+        else:
+            raise Exception("Variável ainda não declarada")
 
 
 dadoAnalisado = '''
-    int valor;
-    int cont;
-    cont = 0;
+    int soma;
+    int i;
     
-    teste = 5;
-
-    while ((cont<5)){
-        valor = cont * cont;
-        print(valor);
+    soma = 0;
+    i = 0;
+    
+    while (i<10){
+        ndif{
+            soma = soma + 1;
+        }
+        else{
+            soma = soma + 0;
+        }
     }
-
+    
+    if (soma == 5){
+        output(1);
+    }
+    else{
+        output(0);
+    }
 '''
 
 print(dadoAnalisado)
 
-#lexer = lex.lex()
-#lexer.input(dadoAnalisado)
+# lexer = lex.lex()
+# lexer.input(dadoAnalisado)
 
-#while True:
+# while True:
 #    tok = lexer.token()
 #    if not tok:
 #        break
 #    print(tok)
 
-#parser = yacc.yacc()    
-#resultado = parser.parse(dadoAnalisado)
+# parser = yacc.yacc()
+# resultado = parser.parse(dadoAnalisado)
 
-#print(resultado)
+# print(resultado)
 
 parser = Parser(debug=False)
 parser.build(build_lexer=True)
